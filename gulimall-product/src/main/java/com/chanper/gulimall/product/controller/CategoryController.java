@@ -1,6 +1,7 @@
 package com.chanper.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,15 @@ import com.chanper.common.utils.R;
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
+
+    /**
+     *
+     */
+    @RequestMapping("/list/tree")
+    public R list() {
+        List<CategoryEntity> entities = categoryService.listWithTree();
+        return R.ok().put("data", entities);
+    }
 
     /**
      * 列表
@@ -70,6 +80,18 @@ public class CategoryController {
 
         return R.ok();
     }
+
+    /**
+     * 批量修改层级
+     * @param category 修改的类别集合
+     * @return
+     */
+    @RequestMapping("/update/sort")
+    public R updateSort(@RequestBody CategoryEntity[] category) {
+        categoryService.updateBatchById(Arrays.asList(category));
+        return R.ok();
+    }
+
 
     /**
      * 删除

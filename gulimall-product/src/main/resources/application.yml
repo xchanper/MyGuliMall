@@ -1,14 +1,25 @@
-
 spring:
   datasource:
     username: root
     password: 963852
     url: jdbc:mysql://${MY_HOST}:3306/gulimall_pms
     driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      config:
+        server-addr: ${MY_HOST}:8848
+      discovery:
+        server-addr: ${MY_HOST}:8848
+  application:
+    name: gulimall-product
+
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
   global-config:
     db-config:
       id-type: auto
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
 server:
   port: 10000
