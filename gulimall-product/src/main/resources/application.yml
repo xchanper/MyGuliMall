@@ -4,12 +4,14 @@ spring:
     password: 963852
     url: jdbc:mysql://${MY_HOST}:3306/gulimall_pms
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   cloud:
     nacos:
       config:
         server-addr: ${MY_HOST}:8848
       discovery:
         server-addr: ${MY_HOST}:8848
+
   application:
     name: gulimall-product
 

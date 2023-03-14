@@ -1,17 +1,17 @@
 <template>
   <div>
     <el-upload
-      action="http://gulimall-fermhan.oss-cn-qingdao.aliyuncs.com"
-      :data="dataObj"
-      :list-type="listType"
-      :file-list="fileList"
-      :before-upload="beforeUpload"
-      :on-remove="handleRemove"
-      :on-success="handleUploadSuccess"
-      :on-preview="handlePreview"
-      :limit="maxCount"
-      :on-exceed="handleExceed"
-      :show-file-list="showFile"
+        action="http://gulimall-chanper.oss-cn-shenzhen.aliyuncs.com"
+        :data="dataObj"
+        :list-type="listType"
+        :file-list="fileList"
+        :before-upload="beforeUpload"
+        :on-remove="handleRemove"
+        :on-success="handleUploadSuccess"
+        :on-preview="handlePreview"
+        :limit="maxCount"
+        :on-exceed="handleExceed"
+        :show-file-list="showFile"
     >
       <i class="el-icon-plus"></i>
     </el-upload>
@@ -21,8 +21,9 @@
   </div>
 </template>
 <script>
-import { policy } from "./policy";
-import { getUUID } from '@/utils'
+import {policy} from "./policy";
+import {getUUID} from '@/utils'
+
 export default {
   name: "multiUpload",
   props: {
