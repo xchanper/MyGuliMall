@@ -307,40 +307,41 @@ CREATE TABLE qrtz_fired_triggers
 );
 CREATE TABLE qrtz_scheduler_state
 (
-  SCHED_NAME VARCHAR2(120) NOT NULL,
-  INSTANCE_NAME VARCHAR2(200) NOT NULL,
-  LAST_CHECKIN_TIME NUMBER(13) NOT NULL,
-  CHECKIN_INTERVAL NUMBER(13) NOT NULL,
-  CONSTRAINT QRTZ_SCHEDULER_STATE_PK PRIMARY KEY (SCHED_NAME,INSTANCE_NAME)
+    SCHED_NAME VARCHAR2(120) NOT NULL,
+    INSTANCE_NAME VARCHAR2(200) NOT NULL,
+    LAST_CHECKIN_TIME NUMBER(13) NOT NULL,
+    CHECKIN_INTERVAL NUMBER (13) NOT NULL,
+    CONSTRAINT QRTZ_SCHEDULER_STATE_PK PRIMARY KEY (SCHED_NAME, INSTANCE_NAME)
 );
 CREATE TABLE qrtz_locks
 (
-  SCHED_NAME VARCHAR2(120) NOT NULL,
-  LOCK_NAME  VARCHAR2(40) NOT NULL,
-  CONSTRAINT QRTZ_LOCKS_PK PRIMARY KEY (SCHED_NAME,LOCK_NAME)
+    SCHED_NAME VARCHAR2 (120) NOT NULL,
+    LOCK_NAME VARCHAR2 (40) NOT NULL,
+    CONSTRAINT QRTZ_LOCKS_PK PRIMARY KEY (SCHED_NAME, LOCK_NAME)
 );
 
-create index idx_qrtz_j_req_recovery on qrtz_job_details(SCHED_NAME,REQUESTS_RECOVERY);
-create index idx_qrtz_j_grp on qrtz_job_details(SCHED_NAME,JOB_GROUP);
+create index idx_qrtz_j_req_recovery on QRTZ_JOB_DETAILS (SCHED_NAME, REQUESTS_RECOVERY);
+create index idx_qrtz_j_grp on QRTZ_JOB_DETAILS (SCHED_NAME, JOB_GROUP);
 
-create index idx_qrtz_t_j on qrtz_triggers(SCHED_NAME,JOB_NAME,JOB_GROUP);
-create index idx_qrtz_t_jg on qrtz_triggers(SCHED_NAME,JOB_GROUP);
-create index idx_qrtz_t_c on qrtz_triggers(SCHED_NAME,CALENDAR_NAME);
-create index idx_qrtz_t_g on qrtz_triggers(SCHED_NAME,TRIGGER_GROUP);
-create index idx_qrtz_t_state on qrtz_triggers(SCHED_NAME,TRIGGER_STATE);
-create index idx_qrtz_t_n_state on qrtz_triggers(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP,TRIGGER_STATE);
-create index idx_qrtz_t_n_g_state on qrtz_triggers(SCHED_NAME,TRIGGER_GROUP,TRIGGER_STATE);
-create index idx_qrtz_t_next_fire_time on qrtz_triggers(SCHED_NAME,NEXT_FIRE_TIME);
-create index idx_qrtz_t_nft_st on qrtz_triggers(SCHED_NAME,TRIGGER_STATE,NEXT_FIRE_TIME);
-create index idx_qrtz_t_nft_misfire on qrtz_triggers(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME);
-create index idx_qrtz_t_nft_st_misfire on qrtz_triggers(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME,TRIGGER_STATE);
-create index idx_qrtz_t_nft_st_misfire_grp on qrtz_triggers(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME,TRIGGER_GROUP,TRIGGER_STATE);
+create index idx_qrtz_t_j on QRTZ_TRIGGERS (SCHED_NAME, JOB_NAME, JOB_GROUP);
+create index idx_qrtz_t_jg on QRTZ_TRIGGERS (SCHED_NAME, JOB_GROUP);
+create index idx_qrtz_t_c on QRTZ_TRIGGERS (SCHED_NAME, CALENDAR_NAME);
+create index idx_qrtz_t_g on QRTZ_TRIGGERS (SCHED_NAME, TRIGGER_GROUP);
+create index idx_qrtz_t_state on QRTZ_TRIGGERS (SCHED_NAME, TRIGGER_STATE);
+create index idx_qrtz_t_n_state on QRTZ_TRIGGERS (SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP, TRIGGER_STATE);
+create index idx_qrtz_t_n_g_state on QRTZ_TRIGGERS (SCHED_NAME, TRIGGER_GROUP, TRIGGER_STATE);
+create index idx_qrtz_t_next_fire_time on QRTZ_TRIGGERS (SCHED_NAME, NEXT_FIRE_TIME);
+create index idx_qrtz_t_nft_st on QRTZ_TRIGGERS (SCHED_NAME, TRIGGER_STATE, NEXT_FIRE_TIME);
+create index idx_qrtz_t_nft_misfire on QRTZ_TRIGGERS (SCHED_NAME, MISFIRE_INSTR, NEXT_FIRE_TIME);
+create index idx_qrtz_t_nft_st_misfire on QRTZ_TRIGGERS (SCHED_NAME, MISFIRE_INSTR, NEXT_FIRE_TIME, TRIGGER_STATE);
+create index idx_qrtz_t_nft_st_misfire_grp on QRTZ_TRIGGERS (SCHED_NAME, MISFIRE_INSTR, NEXT_FIRE_TIME, TRIGGER_GROUP,
+                                                             TRIGGER_STATE);
 
-create index idx_qrtz_ft_trig_inst_name on qrtz_fired_triggers(SCHED_NAME,INSTANCE_NAME);
-create index idx_qrtz_ft_inst_job_req_rcvry on qrtz_fired_triggers(SCHED_NAME,INSTANCE_NAME,REQUESTS_RECOVERY);
-create index idx_qrtz_ft_j_g on qrtz_fired_triggers(SCHED_NAME,JOB_NAME,JOB_GROUP);
-create index idx_qrtz_ft_jg on qrtz_fired_triggers(SCHED_NAME,JOB_GROUP);
-create index idx_qrtz_ft_t_g on qrtz_fired_triggers(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP);
-create index idx_qrtz_ft_tg on qrtz_fired_triggers(SCHED_NAME,TRIGGER_GROUP);
+create index idx_qrtz_ft_trig_inst_name on QRTZ_FIRED_TRIGGERS (SCHED_NAME, INSTANCE_NAME);
+create index idx_qrtz_ft_inst_job_req_rcvry on QRTZ_FIRED_TRIGGERS (SCHED_NAME, INSTANCE_NAME, REQUESTS_RECOVERY);
+create index idx_qrtz_ft_j_g on QRTZ_FIRED_TRIGGERS (SCHED_NAME, JOB_NAME, JOB_GROUP);
+create index idx_qrtz_ft_jg on QRTZ_FIRED_TRIGGERS (SCHED_NAME, JOB_GROUP);
+create index idx_qrtz_ft_t_g on QRTZ_FIRED_TRIGGERS (SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP);
+create index idx_qrtz_ft_tg on QRTZ_FIRED_TRIGGERS (SCHED_NAME, TRIGGER_GROUP);
 
 

@@ -7,9 +7,13 @@ import com.chanper.common.utils.PageUtils;
 import com.chanper.common.utils.Query;
 import com.chanper.gulimall.product.dao.CategoryDao;
 import com.chanper.gulimall.product.entity.CategoryEntity;
+import com.chanper.gulimall.product.service.CategoryBrandRelationService;
 import com.chanper.gulimall.product.service.CategoryService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,6 +21,9 @@ import java.util.stream.Collectors;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Resource
+    private CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -30,16 +37,67 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public List<CategoryEntity> listWithTree() {
-        // 1. 查出所有分类
-        List<CategoryEntity> entities = baseMapper.selectList(null);
-
-        // 2. 组装父子的树形结构
-
-        return entities.stream().filter(
+        // 1 查出所有分类
+        List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
+        // 2 组装成父子的树型结构
+        // 2.1 找到所有一级分类
+        List<CategoryEntity> level1Menus = categoryEntities.stream().filter(
+                // 找到一级
                 categoryEntity -> categoryEntity.getParentCid() == 0
-        ).peek((menu) -> menu.setChildren(getChildren(menu, entities))).sorted((menu1, menu2) -> {
-            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
-        }).collect(Collectors.toList());
+        ).map(menu -> {
+            // 把当前的child属性改了之后重新返回
+            menu.setChildren(getChildren(menu, categoryEntities));
+            return menu;
+        }).sorted((menu1, menu2) ->
+                menu1.getSort() - menu2.getSort()).collect(Collectors.toList());
+
+        return level1Menus;
+    }
+
+    /**
+     * 找到一个三级目录的完整路径
+     *
+     * @param catelogId
+     * @return
+     */
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> paths = new ArrayList<>();
+        findParentPath(catelogId, paths);
+        // 收集的时候是顺序 前端是逆序显示的 所以用集合工具类给它逆序一下
+        Collections.reverse(paths);
+        return paths.toArray(new Long[0]);
+    }
+
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        this.updateById(category);
+        categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
+    }
+
+    @Override
+    public Long[] findCateLogPath(Long catelogId) {
+        List<Long> paths = new ArrayList<>();
+        paths = findParentPath(catelogId, paths);
+        // 收集的时候是顺序 前端是逆序显示的 所以用集合工具类给它逆序一下
+        Collections.reverse(paths);
+        return paths.toArray(new Long[0]);
+    }
+
+    /**
+     * 递归收集所有父节点
+     *
+     * @param catelogId
+     * @param paths
+     * @return
+     */
+    private List<Long> findParentPath(Long catelogId, List<Long> paths) {
+        paths.add(catelogId);
+        CategoryEntity byId = this.getById(catelogId);
+        if (byId.getParentCid() != 0) {
+            findParentPath(byId.getParentCid(), paths);
+        }
+        return paths;
     }
 
     /**
@@ -50,21 +108,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * @return
      */
     private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
-        // 1 使用全部的目录all首先找出传入目录root的所有下一层目录
-        // 2 使用map对root的所有下一层目录 的 子目录进行设置
-        // 3 利用sorted对所有下一层目录进行排序
-        // 4  collect集合返回listWithTree()函数 这时候一个一级目录root的子目录已经设置成功
-
-        return all.stream().filter(
-                categoryEntity -> {
-                    return categoryEntity.getParentCid() == root.getCatId();
-                }
-        ).peek(categoryEntity -> {
-            // 设置子菜单
+        List<CategoryEntity> children = all.stream().filter(categoryEntity -> {
+            // 找到当前id的子菜单
+            return categoryEntity.getParentCid() == root.getCatId();
+        }).map(categoryEntity -> {
+            // 1 找到子菜单，递归找法
             categoryEntity.setChildren(getChildren(categoryEntity, all));
+            return categoryEntity;
         }).sorted((menu1, menu2) -> {
-            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
+            // 2 菜单排序
+            return menu1.getSort() - menu2.getSort();
+            // menu1.getSort()==null?0;menu1.getSort()
         }).collect(Collectors.toList());
+        return children;
     }
 
 }
