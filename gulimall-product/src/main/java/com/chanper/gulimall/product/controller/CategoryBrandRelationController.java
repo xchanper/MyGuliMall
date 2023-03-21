@@ -29,6 +29,12 @@ public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
 
+    /**
+     * 分配关联的平台
+     *
+     * @param catId
+     * @return
+     */
     @GetMapping("brands/list")
     public R relationBrandList(@RequestParam(value = "catId", required = true) Long catId) {
         List<BrandEntity> vos = categoryBrandRelationService.getBrandsByCatId(catId);

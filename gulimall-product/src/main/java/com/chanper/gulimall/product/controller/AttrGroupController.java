@@ -48,6 +48,12 @@ public class AttrGroupController {
         return R.ok();
     }
 
+    /**
+     * 获取分类下所有分组和属性
+     *
+     * @param catelogId
+     * @return
+     */
     @GetMapping("/{catelogId}/withattr")
     public R getAttrGroupWithAttrs(@PathVariable("catelogId") Long catelogId) {
         // 1.查询当前分类下的所有属性分组

@@ -91,6 +91,7 @@
 
 <script>
 import CategoryCascader from "../common/category-cascader";
+
 export default {
   data() {
     return {
@@ -171,7 +172,7 @@ export default {
   watch: {
     catelogPath(path) {
       //监听到路径变化需要查出这个三级分类的分组信息
-      console.log("路径变了", path);
+      // console.log("路径变了", path);
       this.attrGroups = [];
       this.dataForm.attrGroupId = "";
       this.dataForm.catelogId = path[path.length - 1];

@@ -2,6 +2,7 @@ package com.chanper.gulimall.product.controller;
 
 import com.chanper.common.utils.PageUtils;
 import com.chanper.common.utils.R;
+import com.chanper.gulimall.product.entity.ProductAttrValueEntity;
 import com.chanper.gulimall.product.service.AttrService;
 import com.chanper.gulimall.product.service.ProductAttrValueService;
 import com.chanper.gulimall.product.vo.AttrRespVo;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -30,20 +32,21 @@ public class AttrController {
     @Autowired
     private ProductAttrValueService productAttrValueService;
 
-    // @PostMapping("/update/{spuId}")
-    // public R updateSpiAttr(@PathVariable("spuId") Long spuId, @RequestBody List<ProductAttrValueEntity> entities){
-    //     productAttrValueService.updateSpuAttr(spuId, entities);
-    //     return R.ok();
-    // }
+    @PostMapping("/update/{spuId}")
+    public R updateSpiAttr(@PathVariable("spuId") Long spuId, @RequestBody List<ProductAttrValueEntity> entities) {
+        productAttrValueService.updateSpuAttr(spuId, entities);
+        return R.ok();
+    }
 
     /**
      * 查询属性规格
      */
-    // @GetMapping("/base/listforspu/{spuId}")
-    // public R baseAttrListForSpu(@PathVariable("spuId") Long spuId){
-    //     List<ProductAttrValueEntity> entities = productAttrValueService.baseAttrListForSpu(spuId);
-    //     return R.ok().put("data", entities);
-    // }
+    @GetMapping("/base/listforspu/{spuId}")
+    public R baseAttrListForSpu(@PathVariable("spuId") Long spuId) {
+        List<ProductAttrValueEntity> entities = productAttrValueService.baseAttrListForSpu(spuId);
+        return R.ok().put("data", entities);
+    }
+
     @GetMapping("/{attrType}/list/{catelogId}")
     public R baseAttrList(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId, @PathVariable("attrType") String attrType) {
         PageUtils page = attrService.queryBaseAttrPage(params, catelogId, attrType);

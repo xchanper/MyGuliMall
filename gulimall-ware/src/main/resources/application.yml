@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: gulimall-ware
   cloud:
     nacos:
       discovery:
@@ -6,10 +8,9 @@ spring:
   datasource:
     username: root
     password: 963852
-    url: jdbc:mysql://${MY_HOST}:3306/gulimall_wms
+    url: jdbc:mysql://localhost:3306/gulimall_wms
     driver-class-name: com.mysql.cj.jdbc.Driver
-  application:
-    name: gulimall-ware
+
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
