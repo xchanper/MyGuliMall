@@ -1,9 +1,11 @@
 package com.chanper.gulimall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chanper.common.to.es.SkuHasStockVo;
 import com.chanper.common.utils.PageUtils;
 import com.chanper.gulimall.ware.entity.WareSkuEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,5 +23,7 @@ public interface WareSkuService extends IService<WareSkuEntity> {
      * 保存库存的时候顺便查到商品价格
      */
     double addStock(Long skuId, Long wareId, Integer skuNum);
+
+    List<SkuHasStockVo> getSkuHasStock(List<Long> skuIds);
 }
 
