@@ -4,6 +4,8 @@ import com.chanper.common.utils.PageUtils;
 import com.chanper.common.utils.R;
 import com.chanper.gulimall.product.entity.CategoryEntity;
 import com.chanper.gulimall.product.service.CategoryService;
+import com.chanper.gulimall.product.service.impl.CategoryServiceImpl;
+import com.chanper.gulimall.product.vo.Catelog2Vo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("product/category")
 public class CategoryController {
+    @Autowired
+    private CategoryServiceImpl categoryService1;
+
+    @GetMapping("/test")
+    public Map<String, List<Catelog2Vo>> testRequest() {
+        return categoryService1.getCatelogJsonFromDBWithRedissonLock();
+    }
+
+
     @Autowired
     private CategoryService categoryService;
 

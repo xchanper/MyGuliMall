@@ -18,6 +18,9 @@ spring:
     cache: false
     suffix: .html
     prefix: classpath:/templates/
+  redis:
+    host: ${MY_HOST}
+    port: 6379
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml

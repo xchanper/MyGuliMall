@@ -86,7 +86,7 @@ spring:
         - id: gulimall_host_route
           uri: lb://gulimall-product
           predicates:
-            - Host=**.gulimall.com  # item
+            - Host=**.gulimall  # item
 
 server:
   port: 10086
