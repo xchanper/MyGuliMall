@@ -16,9 +16,12 @@ import com.chanper.gulimall.product.vo.Catelog2Vo;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -83,6 +86,17 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return paths.toArray(new Long[0]);
     }
 
+    /**
+     * 级联更新所有数据 [分区名默认是就是缓存的前缀] SpringCache: 不加锁
+     *
+     * @CacheEvict: 缓存失效模式 --- 页面一修改 然后就清除这两个缓存
+     * key = "'getLevel1Categorys'" : 记得加单引号 [子解析字符串]
+     * @Caching: 同时进行多种缓存操作
+     * @CacheEvict(value = {"category"}, allEntries = true) : 删除这个分区所有数据
+     * @CachePut: 这次查询操作写入缓存
+     */
+    @CacheEvict(value = {"category"}, allEntries = true)
+    @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
         this.updateById(category);
@@ -143,13 +157,16 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * <p>
      * sync = true: --- 开启同步锁
      */
+    @Cacheable(value = {"category"}, key = "#root.method.name", sync = true)
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
         return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("cat_level", 1));
     }
 
+    @Cacheable(value = "category", key = "#root.methodName")
     @Override
     public Map<String, List<Catelog2Vo>> getCatelogJson() {
+        System.out.println("CategoryServiceImpl::getCatelogJSON()...");
         List<CategoryEntity> entityList = baseMapper.selectList(null);
         // 查询所有一级分类
         List<CategoryEntity> level1 = getCategoryEntities(entityList, 0L);
