@@ -33,7 +33,7 @@ public class ElasticSaveController {
 
 		boolean status;
 		try {
-			status = productSaveService.productStatusUp(skuEsModels);
+			status = productSaveService.saveProductAsIndices(skuEsModels);
 		} catch (IOException e) {
 			log.error("ElasticSaveController商品上架错误: {}", e);
 			return R.error(BizCodeEnum.PRODUCT_UP_EXCEPTION.getCode(), BizCodeEnum.PRODUCT_UP_EXCEPTION.getMsg());

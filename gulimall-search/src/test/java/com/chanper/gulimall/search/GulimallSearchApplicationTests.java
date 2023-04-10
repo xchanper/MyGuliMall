@@ -2,7 +2,7 @@ package com.chanper.gulimall.search;
 
 import com.alibaba.fastjson.JSON;
 import com.chanper.gulimall.search.bean.Account;
-import com.chanper.gulimall.search.config.GuliESConfig;
+import com.chanper.gulimall.search.config.GulimallElasticSearchConfig;
 import lombok.Data;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
@@ -60,7 +60,7 @@ class GulimallSearchApplicationTests {
         indexRequest.source(jsonString, XContentType.JSON);
 
         // 执行创建索引和保存数据
-        IndexResponse index = client.index(indexRequest, GuliESConfig.COMMON_OPTIONS);
+        IndexResponse index = client.index(indexRequest, GulimallElasticSearchConfig.COMMON_OPTIONS);
 
         System.out.println(index);
 
@@ -92,7 +92,7 @@ class GulimallSearchApplicationTests {
         searchRequest.source(sourceBuilder);
 
         // 2 执行检索
-        SearchResponse response = client.search(searchRequest, GuliESConfig.COMMON_OPTIONS);
+        SearchResponse response = client.search(searchRequest, GulimallElasticSearchConfig.COMMON_OPTIONS);
         // 3 分析响应结果
         System.out.println(response.toString());
 
