@@ -6,18 +6,45 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chanper.common.utils.PageUtils;
 import com.chanper.common.utils.Query;
 import com.chanper.gulimall.product.dao.SkuInfoDao;
+import com.chanper.gulimall.product.entity.SkuImagesEntity;
 import com.chanper.gulimall.product.entity.SkuInfoEntity;
-import com.chanper.gulimall.product.service.SkuInfoService;
+import com.chanper.gulimall.product.entity.SpuInfoDescEntity;
+import com.chanper.gulimall.product.service.*;
+import com.chanper.gulimall.product.vo.ItemSaleAttrVo;
+import com.chanper.gulimall.product.vo.SkuItemVo;
+import com.chanper.gulimall.product.vo.SpuItemAttrGroup;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 
 @Service("skuInfoService")
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> implements SkuInfoService {
+
+    @Autowired
+    private SkuImagesService imagesService;
+
+    @Autowired
+    private SkuSaleAttrValueService skuSaleAttrValueService;
+
+    @Autowired
+    private SpuInfoDescService spuInfoDescService;
+
+    @Autowired
+    private AttrGroupService attrGroupService;
+
+    /**
+     * 自定义线程池
+     */
+    @Autowired
+    private ThreadPoolExecutor executor;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -87,6 +114,51 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 查询页面详细内容
+     */
+    @Override
+    public SkuItemVo item(Long skuId) throws ExecutionException, InterruptedException {
+        SkuItemVo skuItemVo = new SkuItemVo();
+
+        // 1. sku 基本信息
+        CompletableFuture<SkuInfoEntity> infoFuture = CompletableFuture.supplyAsync(() -> {
+            SkuInfoEntity info = getById(skuId);
+            skuItemVo.setInfo(info);
+            return info;
+        }, executor);
+
+        // 2. sku图片信息
+        CompletableFuture<Void> imageFuture = CompletableFuture.runAsync(() -> {
+            List<SkuImagesEntity> images = imagesService.getImagesBySkuId(skuId);
+            skuItemVo.setImages(images);
+        }, executor);
+
+        // 3. 获取spu销售属性组合 list (在 1 之后)
+        CompletableFuture<Void> saleAttrFuture = infoFuture.thenAcceptAsync(res -> {
+            List<ItemSaleAttrVo> saleAttrVos = skuSaleAttrValueService.getSaleAttrsBuSpuId(res.getSpuId());
+            skuItemVo.setSaleAttr(saleAttrVos);
+        }, executor);
+
+        // 4. 获取 spu 介绍 （在 1 之后）
+        CompletableFuture<Void> descFuture = infoFuture.thenAcceptAsync(res -> {
+            SpuInfoDescEntity spuInfo = spuInfoDescService.getById(res.getSpuId());
+            skuItemVo.setDesc(spuInfo);
+        }, executor);
+
+        // 5. 获取spu规格参数信息 (在 1 之后)
+        CompletableFuture<Void> baseAttrFuture = infoFuture.thenAcceptAsync(res -> {
+            List<SpuItemAttrGroup> attrGroups = attrGroupService.getAttrGroupWithAttrsBySpuId(res.getSpuId(), res.getCatalogId());
+            skuItemVo.setGroupAttrs(attrGroups);
+        }, executor);
+
+        // TODO 6. 查询当前 sku 是否参与秒杀优惠
+
+        // 等待所有任务都完成在返回
+        CompletableFuture.allOf(imageFuture, saleAttrFuture, descFuture, baseAttrFuture).get();
+        return skuItemVo;
     }
 
 
