@@ -28,9 +28,13 @@
         <module>gulimall-gateway</module>
         <module>gulimall-third-party</module>
         <module>gulimall-search</module>
+        <module>gulimall-auth-server</module>
 
         <module>renren-fast</module>
         <module>renren-generator</module>
+
+        <module>sso-test-clientA</module>
+        <module>sso-test-clientB</module>
     </modules>
 
     <build>

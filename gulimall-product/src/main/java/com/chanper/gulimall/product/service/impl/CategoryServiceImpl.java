@@ -166,7 +166,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Cacheable(value = "category", key = "#root.methodName")
     @Override
     public Map<String, List<Catelog2Vo>> getCatelogJson() {
-        System.out.println("CategoryServiceImpl::getCatelogJSON()...");
+        // System.out.println("CategoryServiceImpl::getCatelogJSON()...");
         List<CategoryEntity> entityList = baseMapper.selectList(null);
         // 查询所有一级分类
         List<CategoryEntity> level1 = getCategoryEntities(entityList, 0L);
@@ -266,7 +266,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             try {
                 data = getDataFromDB();
             } finally {
-                String lockValue = stringRedisTemplate.opsForValue().get("lock");
                 String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
                 // 3. Lua 脚本执行原子查询和删除 [分布式下必须是Lua脚本删锁,不然会因为业务处理时间、网络延迟等等引起数据还没返回锁过期或者返回的过程中过期 然后把别人的锁删了]
                 stringRedisTemplate.execute(new DefaultRedisScript<>(script, Long.class), Collections.singletonList("lock"), uuid);
