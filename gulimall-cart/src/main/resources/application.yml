@@ -1,0 +1,22 @@
+spring:
+  redis:
+    host: ${MY_HOST}
+  application:
+    name: gulimall-cart
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${MY_HOST}:8848
+      config:
+        server-addr: ${MY_HOST}:8848
+  thymeleaf:
+    cache: false
+  session:
+    store-type: redis
+server:
+  port: 23000
+gulimall:
+  thread:
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10

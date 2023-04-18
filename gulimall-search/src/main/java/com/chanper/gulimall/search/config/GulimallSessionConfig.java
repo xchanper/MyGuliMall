@@ -1,4 +1,4 @@
-package com.chanper.gulimall.auth.config;
+package com.chanper.gulimall.search.config;
 
 import com.chanper.common.constant.AuthServerConstant;
 import org.springframework.context.annotation.Bean;
@@ -12,11 +12,8 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
  * Description：设置Session作用域、自定义cookie序列化机制
  */
 @Configuration
-public class AuthSessionConfig {
+public class GulimallSessionConfig {
 
-    /**
-     * 为Session扩大作用域
-     */
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
